@@ -1,25 +1,24 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import { redirect } from "react-router";
-import { Form, useLoaderData, useNavigate } from "react-router";
+import { Form, redirect, useLoaderData, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 import { Button, Grid, InputLabel, Stack, TextField } from "@mui/material";
+import type { Route } from "./+types/contacts.$contactId_.edit";
 
 import { getContact, updateContact } from "~/api/data";
 
-export const action = async ({ params, request }: ActionFunctionArgs) => {
+export async function action({ params, request }: Route.ActionArgs) {
   invariant(params.contactId, "Missing contactId param");
   const formData = await request.formData();
   const updates = Object.fromEntries(formData);
   await updateContact(params.contactId, updates);
   return redirect(`/contacts/${params.contactId}`);
-};
+}
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.contactId, "Missing contactId param");
   const contact = await getContact(params.contactId);
   if (!contact) throw new Response("Not Found", { status: 404 });
   return { contact };
-};
+}
 
 export default function EditContact() {
   const { contact } = useLoaderData<typeof loader>();

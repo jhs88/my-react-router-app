@@ -1,6 +1,6 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/$";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   throw new Response(`${new URL(request.url).pathname} Not Found`, {
     status: 404,
   });

@@ -5,13 +5,13 @@ import invariant from "tiny-invariant";
 
 import { getContact, updateContact } from "~/api/data";
 
-export const action = async ({ params, request }: ActionFunctionArgs) => {
+export async function action({ params, request }: ActionFunctionArgs) {
   invariant(params.contactId, "Missing contactId param");
   const formData = await request.formData();
   return updateContact(params.contactId, {
     favorite: formData.get("favorite") === "true",
   });
-};
+}
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.contactId, "Missing contactId param");
