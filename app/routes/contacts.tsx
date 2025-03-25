@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { useEffect } from "react";
 import {
   Form,
   Link,
@@ -65,6 +66,17 @@ export default function SidebarLayout({ loaderData }: Route.ComponentProps) {
     navigation.location &&
     new URLSearchParams(navigation.location.search).has("q");
   const submit = useSubmit();
+
+  // If you click back after a search,
+  // the form field still has the value
+  // you entered even though the list is no longer filtered.
+  // useEffect is used to manipulate the input's value in the DOM directly.
+  useEffect(() => {
+    const searchField = document.getElementById("q");
+    if (searchField instanceof HTMLInputElement) {
+      searchField.value = q ?? "";
+    }
+  }, [q]);
 
   return (
     <Grid container spacing={4}>
@@ -153,7 +165,9 @@ export default function SidebarLayout({ loaderData }: Route.ComponentProps) {
         }}
       >
         <div
-          className={navigation.state === "loading" ? "loading" : ""}
+          className={
+            navigation.state === "loading" && !searching ? "loading" : ""
+          }
           id="detail"
         >
           <Outlet />
