@@ -152,7 +152,12 @@ export default function SidebarLayout({ loaderData }: Route.ComponentProps) {
           alignItems: "center",
         }}
       >
-        <Outlet />
+        <div
+          className={navigation.state === "loading" ? "loading" : ""}
+          id="detail"
+        >
+          <Outlet />
+        </div>
       </Grid>
     </Grid>
   );

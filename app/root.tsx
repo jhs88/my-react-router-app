@@ -1,18 +1,16 @@
 import { Container } from "@mui/material";
 import type { LinksFunction } from "react-router";
-import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration
-} from "react-router";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 import type { Route } from "./+types/root";
 
 import { ErrorFallback } from "~/components/ErrorFallback";
+import appStylesHref from "~/styles.css?url";
 import { getMuiLinks, MuiDocument, MuiMeta } from "~/theme";
 
-export const links: LinksFunction = () => [...getMuiLinks()];
+export const links: LinksFunction = () => [
+  ...getMuiLinks(),
+  { rel: "stylesheet", href: appStylesHref },
+];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
