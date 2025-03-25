@@ -6,7 +6,10 @@
   "scripts": {
     "build": "react-router build",
     "dev": "react-router dev",
-    "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint ./app --ext .ts,.tsx --fix",
+    "style:fix": "prettier -w .",
+    "style": "prettier -c .",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc"
   },

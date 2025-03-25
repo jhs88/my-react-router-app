@@ -12,12 +12,12 @@ export async function loader({ request }: Route.LoaderArgs) {
   Allow: /
 
   Sitemap: ${origin}/sitemap.xml 
-  `
+  `;
 
   return new Response(robotText, {
     status: 200,
     headers: {
       "Content-Type": "text/plain",
-    }
+    },
   });
 }
