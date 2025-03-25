@@ -104,11 +104,13 @@ export default function Contact({ loaderData }: Route.ComponentProps) {
 
 function Favorite({ contact }: { contact: Pick<ContactRecord, "favorite"> }) {
   const fetcher = useFetcher();
+  // read the optimistic value from fetcher.formData
   const favorite = fetcher.formData
     ? fetcher.formData.get("favorite") === "true"
     : contact.favorite;
 
   return (
+    // fetch.Form does not navigate
     <fetcher.Form method="post">
       <Button
         variant="outlined"
