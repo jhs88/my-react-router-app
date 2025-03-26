@@ -1,2 +1,4 @@
 import type { Config } from "@react-router/dev/config";
-export default {} satisfies Config;
+export default {
+  prerender: ["/", "/about", "/mui"],
+} satisfies Config;

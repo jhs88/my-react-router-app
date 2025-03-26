@@ -1,11 +1,4 @@
-.git
-.github
 .react-router
-.*ignore
-.eslint*
-.prettierrc
-.env*
-README.md
+build
 compose.yml
 node_modules
-build

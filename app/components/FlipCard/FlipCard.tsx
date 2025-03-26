@@ -5,7 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
 import React, { useMemo, useState } from "react";
 
-import "~/styles/FlipCard.scss";
+import "./styles.scss";
 
 /**
  * Renders a flip card component with a front and back side.

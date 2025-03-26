@@ -1,39 +1,16 @@
-import type { LinksFunction, LoaderFunctionArgs } from "react-router";
-import { redirect } from "react-router";
-import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  useLoaderData,
-  useMatches,
-  useRouteError,
-} from "react-router";
+import { Container } from "@mui/material";
+import type { LinksFunction } from "react-router";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import type { Route } from "./+types/root";
 
-import { createEmptyContact, getContacts } from "~/api/data";
 import { ErrorFallback } from "~/components/ErrorFallback";
-import Content from "~/sections/Layout";
+import appStylesHref from "~/styles.css?url";
 import { getMuiLinks, MuiDocument, MuiMeta } from "~/theme";
 
-export const links: LinksFunction = () => [...getMuiLinks()];
-
-export async function action() {
-  const contact = await createEmptyContact();
-  return redirect(`/contacts/${contact.id}/edit`);
-}
-
-export const useRootLoaderData = () => {
-  const [root] = useMatches();
-  return root?.data as SerializeFrom<typeof loader>;
-};
-
-export async function loader({ request }: LoaderFunctionArgs) {
-  const url = new URL(request.url);
-  const q = url.searchParams.get("q");
-  const contacts = await getContacts(q);
-  return { contacts, q };
-}
+export const links: LinksFunction = () => [
+  ...getMuiLinks(),
+  { rel: "stylesheet", href: appStylesHref },
+];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -46,7 +23,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <MuiDocument>
+          <Container>{children}</Container>
+        </MuiDocument>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -54,27 +33,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
-  const data = useLoaderData<typeof loader>();
-
-  return (
-    <MuiDocument>
-      <Content {...data}>
-        <Outlet />
-      </Content>
-    </MuiDocument>
-  );
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default function App(_: Route.ComponentProps) {
+  return <Outlet />;
 }
 
-export function ErrorBoundary() {
-  const error = useRouteError();
-  const data = useRootLoaderData();
-
-  return (
-    <MuiDocument>
-      <Content {...data}>
-        <ErrorFallback {...{ error }} />
-      </Content>
-    </MuiDocument>
-  );
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  return <ErrorFallback {...{ error }} />;
 }

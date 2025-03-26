@@ -1,6 +1,6 @@
-import { Form, redirect, useLoaderData, useNavigate } from "react-router";
-import invariant from "tiny-invariant";
 import { Button, Grid, InputLabel, Stack, TextField } from "@mui/material";
+import { Form, redirect, useNavigate } from "react-router";
+import invariant from "tiny-invariant";
 import type { Route } from "./+types/contacts.$contactId_.edit";
 
 import { getContact, updateContact } from "~/api/data";
@@ -20,8 +20,8 @@ export async function loader({ params }: Route.LoaderArgs) {
   return { contact };
 }
 
-export default function EditContact() {
-  const { contact } = useLoaderData<typeof loader>();
+export default function EditContact({ loaderData }: Route.ComponentProps) {
+  const { contact } = loaderData;
   const navigate = useNavigate();
 
   return (

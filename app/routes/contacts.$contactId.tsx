@@ -1,11 +1,11 @@
 import { Box, Button, Link, Stack, Typography } from "@mui/material";
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import { Form, useFetcher, useLoaderData } from "react-router";
+import { Form, useFetcher } from "react-router";
 import invariant from "tiny-invariant";
+import type { Route } from "./+types/contacts.$contactId";
 
 import { getContact, updateContact } from "~/api/data";
 
-export async function action({ params, request }: ActionFunctionArgs) {
+export async function action({ params, request }: Route.ActionArgs) {
   invariant(params.contactId, "Missing contactId param");
   const formData = await request.formData();
   return updateContact(params.contactId, {
@@ -13,7 +13,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
   });
 }
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.contactId, "Missing contactId param");
   // const delay = (milliseconds: number) =>
   // new Promise((res) => setTimeout(() => res({ data: [] }), milliseconds));
@@ -23,8 +23,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return { contact };
 }
 
-export default function Contact() {
-  const { contact } = useLoaderData<typeof loader>();
+export default function Contact({ loaderData }: Route.ComponentProps) {
+  const { contact } = loaderData;
 
   return (
     <Stack
@@ -104,11 +104,13 @@ export default function Contact() {
 
 function Favorite({ contact }: { contact: Pick<ContactRecord, "favorite"> }) {
   const fetcher = useFetcher();
+  // read the optimistic value from fetcher.formData
   const favorite = fetcher.formData
     ? fetcher.formData.get("favorite") === "true"
     : contact.favorite;
 
   return (
+    // fetch.Form does not navigate
     <fetcher.Form method="post">
       <Button
         variant="outlined"

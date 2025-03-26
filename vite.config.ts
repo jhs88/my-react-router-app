@@ -7,9 +7,5 @@ export default defineConfig({
   ssr: {
     noExternal: ["@mui/*"],
   },
-  plugins: [
-    reactRouterDevTools(),
-    reactRouter(),
-    tsconfigPaths(),
-  ],
+  plugins: [reactRouterDevTools(), reactRouter(), tsconfigPaths()],
 });

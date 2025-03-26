@@ -1,3 +1,11 @@
+type SessionData = {
+  userId: string;
+};
+
+type SessionFlashData = {
+  error: string;
+};
+
 type OfferProps = {
   subOfferType?: string;
   offerStartDate?: string;

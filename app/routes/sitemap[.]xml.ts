@@ -15,24 +15,31 @@ export async function loader({ request }: Route.LoaderArgs) {
     lastModified: new Date().toISOString().split("T")[0],
   }));
 
-  const itemsXml = [...routes, ...contacts].map((route) => `
-    <url>
-      <loc>${route.url}</loc>
-      <lastmod>${new Date(route.lastModified).toISOString().split("T")[0]}</lastmod>
-      <priority>1.0</priority>
-    </url>`);
+  const itemsXml = [...routes, ...contacts]
+    .map((route) =>
+      `
+<url>
+    <loc>${route.url}</loc>
+    <lastmod>${new Date(route.lastModified).toISOString().split("T")[0]}</lastmod>
+    <priority>1.0</priority>
+</url>
+    `.trim(),
+    )
+    .join("\n");
 
   const sitemap = `
-  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    ${itemsXml}
-  </urlset>`;
+<?xml version="1.0" encoding="UTF-8" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${itemsXml}
+</urlset>
+`.trim();
 
   return new Response(sitemap, {
     status: 200,
     headers: {
       "Content-Type": "application/xml",
       "xml-version": "1.0",
-      "encoding": "UTF-8"
-    }
+      encoding: "UTF-8",
+    },
   });
 }

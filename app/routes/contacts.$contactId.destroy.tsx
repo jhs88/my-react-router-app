@@ -7,5 +7,5 @@ import { deleteContact } from "~/api/data";
 export async function action({ params }: Route.ActionArgs) {
   invariant(params.contactId, "Missing contactId param");
   await deleteContact(params.contactId);
-  return redirect("/");
+  return redirect("/contacts");
 }
