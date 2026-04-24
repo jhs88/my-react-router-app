@@ -1,0 +1,40 @@
+---
+title: "Mastering OKLCH Colors"
+date: "March 28, 2026"
+readTime: "8 min read"
+description: "How to create perceptually uniform and maintainable color palettes in modern CSS."
+tags: [CSS, OKLCH, Color]
+---
+
+# Mastering OKLCH Colors
+
+How to create perceptually uniform and maintainable color palettes in modern CSS.
+
+OKLCH provides a way to define colors based on how the human eye actually perceives them...
+
+## Why OKLCH Matters
+
+Traditional color spaces like RGB and HSL can be frustrating for designers. When you change the lightness of a color in HSL, the perceived brightness often shifts significantly depending on the hue. This makes it incredibly difficult to maintain consistent contrast ratios and visual hierarchy.
+
+OKLCH solves this by decoupling:
+
+- **L (Lightness)**: Perceptual brightness.
+- **C (Chroma)**: The intensity or saturation of the color.
+- **H (Hue)**: The actual color angle.
+
+## Implementation in CSS
+
+With modern browsers, we can now use OKLCH directly in our stylesheets:
+
+```css
+:root {
+  --brand-primary: oklch(60% 0.15 250);
+  --brand-secondary: oklch(75% 0.1 150);
+}
+```
+
+This allows for much more predictable color manipulations. For example, we can create hover states by simply adjusting the lightness component without affecting the hue or chroma.
+
+### Achieving Perfect Contrast
+
+Using OKLCH makes it trivial to ensure accessibility. Since lightness is perceptually uniform, we can set a target lightness for all text elements and be confident that they meet WCAG standards regardless of their hue.

@@ -1,0 +1,35 @@
+---
+title: "Typography as Architecture"
+date: "March 15, 2026"
+readTime: "4 min read"
+description: "Using scale, weight, and fluid typography to build structural hierarchy in web interfaces."
+tags: [Typography, CSS, Design]
+---
+
+# Typography as Architecture
+
+Using scale, weight, and fluid typography to build structural hierarchy in web interfaces.
+
+Typography is the skeleton of the web...
+
+## The Foundation of Hierarchy
+
+Typography is more than just choosing a font. It is about creating a system of communication. A well-designed typographic system guides the user through the content, indicating what is important, what is secondary, and how different pieces of information relate to one another.
+
+## Fluid Typography with `clamp()`
+
+In a responsive era, static font sizes are no longer sufficient. We need typography that breathes and adapts to the viewport.
+
+Using the CSS `clamp()` function, we can define font sizes that scale smoothly between a minimum and maximum value:
+
+```css
+h1 {
+  font-size: clamp(2.5rem, 8vw, 5rem);
+}
+```
+
+This ensures that our headings remain impactful on large displays while staying readable on mobile devices, all without a mountain of media queries.
+
+## Weight and Scale
+
+The interplay of font weight and scale is crucial. A large, light-weight heading can feel elegant and modern, while a smaller, heavy-weight heading can feel authoritative and structural. By carefully controlling these variables, we can build a truly architectural typographic system.
