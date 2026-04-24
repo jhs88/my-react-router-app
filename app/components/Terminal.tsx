@@ -23,10 +23,25 @@ interface TerminalState {
   commandHistoryIndex: number;
 }
 
+interface BlogPost {
+  slug: string;
+  title: string;
+  description: string;
+  date: string;
+  readTime: string;
+  tags?: string[];
+  codeSnippet?: string;
+}
+
 interface CommandDefinition {
   name: string;
   description: string;
-  handler: (args: string[], bash: Bash) => Promise<string>;
+  handler: (
+    args: string[],
+    bash: Bash,
+    posts?: BlogPost[],
+    onThemeChange?: (theme: "light" | "dark" | "system") => void,
+  ) => Promise<string>;
 }
 
 // ---------------------------------------------------------------------------
@@ -79,16 +94,13 @@ const COMMANDS: CommandDefinition[] = [
   {
     name: "ls",
     description: "List blog posts",
-    handler: async (args, bash) => {
-      try {
-        const entries = await bash.fs.readdir("/");
-        if (entries.length === 0) {
-          return "Empty directory.";
-        }
-        return entries.join("  ");
-      } catch {
-        return "Could not read directory.";
+    handler: async (args, bash, posts) => {
+      if (!posts || posts.length === 0) {
+        return "No posts available.";
       }
+      return posts
+        .map((p) => `${p.slug}  ${p.date}`)
+        .join("\n");
     },
   },
   {
@@ -122,8 +134,53 @@ const COMMANDS: CommandDefinition[] = [
   {
     name: "theme",
     description: "Toggle dark/light theme",
-    handler: async () => {
-      return "Theme toggled. (See /theme for implementation)";
+    handler: async (args, bash, posts, onThemeChange) => {
+      if (!onThemeChange) {
+        return "Theme control not available.";
+      }
+      const current = args[0]?.toLowerCase();
+      if (current === "dark") {
+        onThemeChange("dark");
+        return "Theme set to dark.";
+      }
+      if (current === "light") {
+        onThemeChange("light");
+        return "Theme set to light.";
+      }
+      if (current === "system") {
+        onThemeChange("system");
+        return "Theme set to system default.";
+      }
+      return "Usage: theme [dark|light|system]";
+    },
+  },
+  {
+    name: "cat",
+    description: "Read a blog post",
+    handler: async (args, bash, posts) => {
+      if (!posts || posts.length === 0) {
+        return "No posts available.";
+      }
+      const slug = args[0];
+      if (!slug) {
+        return "Usage: cat <post-slug>\n\nAvailable posts:\n" + posts.map((p) => `  ${p.slug}`).join("\n");
+      }
+      const post = posts.find((p) => p.slug === slug);
+      if (!post) {
+        return `Post not found: ${slug}\n\nAvailable posts:\n` + posts.map((p) => `  ${p.slug}`).join("\n");
+      }
+      let output = `${post.title}\n`;
+      output += `${"─".repeat(post.title.length)}\n\n`;
+      output += `Date: ${post.date}\n`;
+      output += `Read time: ${post.readTime}\n`;
+      if (post.tags && post.tags.length > 0) {
+        output += `Tags: ${post.tags.join(", ")}\n`;
+      }
+      output += `\n${post.description}\n`;
+      if (post.codeSnippet) {
+        output += `\n---\nCode snippet:\n${post.codeSnippet.split("\n").slice(0, 5).join("\n")}${post.codeSnippet.split("\n").length > 5 ? "\n..." : ""}\n`;
+      }
+      return output;
     },
   },
 ];
@@ -150,7 +207,12 @@ function renderTerminalContent(state: TerminalState): TerminalLine[] {
 // Component
 // ---------------------------------------------------------------------------
 
-export default function Terminal() {
+interface TerminalProps {
+  posts?: BlogPost[];
+  onThemeChange?: (theme: "light" | "dark" | "system") => void;
+}
+
+export default function Terminal({ posts, onThemeChange }: TerminalProps) {
   const [state, setState] = useState<TerminalState>({
     history: [],
     currentInput: "",
@@ -222,7 +284,7 @@ export default function Terminal() {
       }
 
       try {
-        const output = await command.handler(args, bash);
+        const output = await command.handler(args, bash, posts, onThemeChange);
         setState((prev) => ({
           ...prev,
           history: [
