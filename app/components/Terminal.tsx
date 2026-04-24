@@ -81,13 +81,13 @@ const COMMANDS: CommandDefinition[] = [
     description: "List blog posts",
     handler: async (args, bash) => {
       try {
-        const entries = await bash.fs.readdir("/posts");
+        const entries = await bash.fs.readdir("/");
         if (entries.length === 0) {
-          return "No posts found.";
+          return "Empty directory.";
         }
-        return entries.map((e) => e.name).join("  ");
+        return entries.join("  ");
       } catch {
-        return "No posts directory found.";
+        return "Could not read directory.";
       }
     },
   },
@@ -159,20 +159,7 @@ export default function Terminal() {
     commandHistoryIndex: -1,
   });
 
-  const [bash] = useState(() => {
-    const b = new Bash({
-      fs: {
-        type: "in-memory",
-        initialFiles: {
-          "/posts": {
-            type: "directory",
-            entries: {},
-          },
-        },
-      },
-    });
-    return b;
-  });
+  const [bash] = useState(() => new Bash({}));
 
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
