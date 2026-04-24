@@ -30,7 +30,7 @@ interface BlogPost {
   date: string;
   readTime: string;
   tags?: string[];
-  codeSnippet?: string;
+  codeSnippet?: string | null;
 }
 
 interface CommandDefinition {
