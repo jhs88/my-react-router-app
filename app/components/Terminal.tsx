@@ -374,75 +374,97 @@ export default function Terminal() {
   const displayLines = renderTerminalContent(state);
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full bg-[#0d1117] text-[#c9d1d9] rounded-lg overflow-y-auto"
-      style={{ maxHeight: "32rem" }}
-      onClick={() => inputRef.current?.focus()}
-    >
-      {/* Title bar */}
-      <div className="flex items-center gap-2 px-4 py-2 bg-[#161b22] border-b border-[#30363d]">
-        <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
-        <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
-        <div className="w-3 h-3 rounded-full bg-[#28c840]" />
-        <span className="ml-2 text-xs text-[#8b949e] font-mono">
-          jhs@journal:~
-        </span>
-      </div>
+    <>
+      <style>{`
+        @keyframes terminal-blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 0.7; }
+          50% { opacity: 0.3; }
+        }
+      `}</style>
 
-      {/* Terminal body */}
-      <div className="p-4 font-mono text-sm leading-relaxed">
-        {displayLines.map((line, i) => {
-          if (line.type === "input") {
-            // Check if this is the last line (current input line)
-            const isLastLine = i === displayLines.length - 1;
+      <div className="relative">
+      {/* Glow effect */}
+      <div
+        className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 rounded-xl blur-sm opacity-70"
+        style={{ animation: "pulse 4s ease-in-out infinite" }}
+      />
+
+      <div
+        ref={containerRef}
+        className="relative w-full bg-[#0d1117] text-[#c9d1d9] rounded-lg overflow-y-auto border border-[#30363d]"
+        style={{ maxHeight: "32rem" }}
+        onClick={() => inputRef.current?.focus()}
+      >
+        {/* Title bar */}
+        <div className="flex items-center gap-2 px-4 py-2 bg-[#161b22] border-b border-[#30363d]">
+          <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
+          <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
+          <div className="w-3 h-3 rounded-full bg-[#28c840]" />
+          <span className="ml-2 text-xs text-[#8b949e] font-mono">
+            jhs@journal:~
+          </span>
+        </div>
+
+        {/* Terminal body */}
+        <div className="p-4 font-mono text-sm leading-relaxed">
+          {displayLines.map((line, i) => {
+            if (line.type === "input") {
+              // Check if this is the last line (current input line)
+              const isLastLine = i === displayLines.length - 1;
+              return (
+                <div key={i} className="whitespace-pre-wrap break-all">
+                  <span className="text-[#7ee787]">jhs@journal:~$ </span>
+                  <span className="text-[#c9d1d9]">{line.text.slice(DEFAULT_PROMPT.length)}</span>
+                  {isLastLine && focused && (
+                    <span className="inline-block w-2 h-4 bg-[#c9d1d9] ml-0.5" style={{ animation: "terminal-blink 1s step-end infinite" }} />
+                  )}
+                </div>
+              );
+            }
+            if (line.type === "error") {
+              return (
+                <div key={i} className="whitespace-pre-wrap break-all text-[#f85149]">
+                  {line.text}
+                </div>
+              );
+            }
             return (
-              <div key={i} className="whitespace-pre-wrap break-all">
+              <div key={i} className="whitespace-pre-wrap break-all text-[#c9d1d9]">
                 {line.text}
-                {isLastLine && focused && (
-                  <span className="inline-block w-2 h-4 bg-[#c9d1d9] ml-0.5 animate-pulse" />
-                )}
               </div>
             );
-          }
-          if (line.type === "error") {
-            return (
-              <div key={i} className="whitespace-pre-wrap break-all text-[#f85149]">
-                {line.text}
-              </div>
-            );
-          }
-          return (
-            <div key={i} className="whitespace-pre-wrap break-all text-[#c9d1d9]">
-              {line.text}
-            </div>
-          );
-        })}
+          })}
 
-        {/* Hidden input for capturing keystrokes */}
-        <input
-          ref={inputRef}
-          type="text"
-          value={state.currentInput}
-          onChange={(e) =>
-            setState((prev) => ({
-              ...prev,
-              currentInput: e.target.value,
-              cursorPosition: e.target.value.length,
-            }))
-          }
-          onKeyDown={handleKeyDown}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          className="sr-only"
-          autoFocus
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
-          spellCheck={false}
-          aria-label="Terminal input"
-        />
+          {/* Hidden input for capturing keystrokes */}
+          <input
+            ref={inputRef}
+            type="text"
+            value={state.currentInput}
+            onChange={(e) =>
+              setState((prev) => ({
+                ...prev,
+                currentInput: e.target.value,
+                cursorPosition: e.target.value.length,
+              }))
+            }
+            onKeyDown={handleKeyDown}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            className="sr-only"
+            autoFocus
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
+            aria-label="Terminal input"
+          />
+        </div>
       </div>
     </div>
+    </>
   );
 }
