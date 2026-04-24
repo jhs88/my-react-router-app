@@ -37,52 +37,50 @@ export default function BlogIndex({
   }
 
   return (
-    <div className="space-y-32">
+    <div className="space-y-24">
       <section>
         <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-foreground mb-6 leading-tight">
           Journal
         </h1>
         <p className="text-xl text-muted-foreground max-w-xl leading-relaxed">
-          Exploring the intersection of engineering precision and aesthetic intentionality.
+          All articles, listed chronologically.
         </p>
       </section>
 
       <section>
-        <h2 className="text-sm font-medium uppercase tracking-widest text-muted-foreground mb-12">
-          Articles
-        </h2>
-        <div className="space-y-16">
-        {posts.map((post, index) => (
-          <article
-            key={post.slug}
-            className={`group ${
-              index === 0 ? "pb-16 border-b border-border" : "pb-16"
-            }`}
-          >
-            <a href={`/blog/${post.slug}`} className="block">
-              <time className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-4 block" dateTime={post.date}>
-                {post.date}
-              </time>
-              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground group-hover:underline decoration-primary/30 underline-offset-8 mb-4">
-                {post.title}
-              </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
-                {post.description}
-              </p>
-              <div className="mt-6 flex items-center gap-2 text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
-                <span>Read article</span>
-                <span className="transition-transform group-hover:translate-x-1">
-                  →
-                </span>
-              </div>
-            </a>
-          </article>
-        ))}
+        <div className="space-y-12">
+          {posts.map((post) => (
+            <article key={post.slug} className="group">
+              <a href={`/blog/${post.slug}`} className="block">
+                <div className="flex items-baseline gap-4 mb-2">
+                  <time className="text-xs font-medium text-muted-foreground uppercase tracking-widest" dateTime={post.date}>
+                    {post.date}
+                  </time>
+                  {post.tags && post.tags.length > 0 && (
+                    <span className="text-xs text-muted-foreground">·</span>
+                  )}
+                  {post.tags && post.tags.length > 0 && (
+                    <span className="text-xs text-muted-foreground">
+                      {post.tags.join(", ")}
+                    </span>
+                  )}
+                  <span className="text-xs text-muted-foreground">·</span>
+                  <span className="text-xs text-muted-foreground">{post.readTime}</span>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-foreground group-hover:underline decoration-primary/30 underline-offset-8 mb-3">
+                  {post.title}
+                </h2>
+                <p className="text-muted-foreground leading-relaxed max-w-2xl">
+                  {post.description}
+                </p>
+              </a>
+            </article>
+          ))}
 
-        {posts.length === 0 && (
-          <p className="text-muted-foreground">No posts yet.</p>
-        )}
-      </div>
+          {posts.length === 0 && (
+            <p className="text-muted-foreground">No posts yet.</p>
+          )}
+        </div>
       </section>
     </div>
   );
