@@ -59,13 +59,13 @@ export default function Index({
   return (
     <div className="space-y-32">
       {/* Terminal Hero */}
-      <section>
+      <section className="animate-fade-in-up">
         <Terminal posts={posts} onThemeChange={handleThemeChange} />
       </section>
 
       {/* Featured Post */}
       {featured && (
-        <section>
+        <section className="animate-fade-in-up-delay-1">
           <FeaturedPost
             slug={featured.slug}
             title={featured.title}
@@ -81,7 +81,7 @@ export default function Index({
 
       {/* Secondary Post Cards */}
       {secondary.length > 0 && (
-        <section>
+        <section className="animate-fade-in-up-delay-2">
           <h2 className="text-sm font-medium uppercase tracking-widest text-muted-foreground mb-8">
             More Articles
           </h2>
@@ -105,14 +105,14 @@ export default function Index({
 
       {/* Tags Bar */}
       {allTags.length > 0 && (
-        <section>
+        <section className="animate-fade-in-up-delay-3">
           <TagsBar tags={allTags} />
         </section>
       )}
 
       {/* Older Posts List */}
       {older.length > 0 && (
-        <section>
+        <section className="animate-fade-in-up-delay-3">
           <OlderPostsList posts={older} />
         </section>
       )}
