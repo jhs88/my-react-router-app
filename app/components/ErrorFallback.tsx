@@ -1,27 +1,24 @@
-import { Box, Stack, Typography } from "@mui/material";
 import { isRouteErrorResponse } from "react-router";
 
-export function ErrorFallback({ error }: ErrorFallbackProps) {
+export function ErrorFallback({ error }: { error: unknown }) {
   return (
-    <Box className="error-page">
-      <Stack
-        spacing={2}
-        sx={{
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Typography variant="h1">
+    <div
+      className="flex items-center justify-center min-h-[400px] p-8"
+      role="alert"
+      aria-live="assertive"
+    >
+      <div className="text-center space-y-4">
+        <h1 className="text-6xl font-bold text-destructive">
           {isRouteErrorResponse(error) ? error.status : 500}
-        </Typography>
-        <Typography>
+        </h1>
+        <p className="text-xl text-muted-foreground">
           {isRouteErrorResponse(error)
             ? (error.data.message ?? error.data)
             : error instanceof Error
               ? error.message
-              : "An Unknown error ocurred"}
-        </Typography>
-      </Stack>
-    </Box>
+              : "An Unknown error occurred"}
+        </p>
+      </div>
+    </div>
   );
 }

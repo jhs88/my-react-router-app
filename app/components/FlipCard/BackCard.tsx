@@ -1,31 +1,29 @@
-import { Grid, Typography } from "@mui/material";
-import Stack from "@mui/material/Stack";
 import React from "react";
-// import { useTranslation } from "react-i18next";
+
+interface BackCardComponentProps {
+  children?: React.ReactNode;
+}
 
 /** Renders the back card component. */
 export default function BackCard(props: BackCardComponentProps) {
-  // const { t } = useTranslation();
   return (
-    <Stack
-      sx={{
-        ml: "1rem",
-        mt: "1rem",
-      }}
-    >
-      <Typography variant="h5">
+    <div className="ml-4 mt-4 space-y-2">
+      <h5 className="text-xl font-medium text-foreground">
         {/* {t("backHeader", { content: { ...props } })} */}
         Test
-      </Typography>
-      <Typography variant="subtitle1">
+      </h5>
+      <p className="text-sm text-muted-foreground">
         {/* {t("subHeader", { ...props })} */}
         Test
-      </Typography>
+      </p>
       {/* {parse(description ?? "", options)} */}Test2
-      {props.children &&
-        React.Children.map(props.children, (child) => (
-          <Grid item>{child}</Grid>
-        ))}
-    </Stack>
+      {props.children && (
+        <div className="grid grid-cols-1 gap-4">
+          {React.Children.map(props.children, (child) => (
+            <div>{child}</div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

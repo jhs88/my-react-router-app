@@ -7,7 +7,7 @@
   ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "typeRoots": ["./node_modules", "./node_modules/@types", "./@types"],
+    "typeRoots": ["./node_modules", "./node_modules/@types"],
     "types": ["node", "vite/client"],
     "target": "ES2022",
     "module": "ES2022",
@@ -20,7 +20,6 @@
     "skipLibCheck": true,
     "noEmit": true,
     "strict": true,
-    "baseUrl": ".",
     "paths": {
       "~/*": ["./app/*"]
     }

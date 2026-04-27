@@ -1,90 +1,90 @@
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Grid from "@mui/material/Grid";
-import React, { useMemo, useState } from "react";
-
+import React, { useState } from "react";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent } from "~/components/ui/card";
 import "./styles.scss";
 
-/**
- * Renders a flip card component with a front and back side.
- *
- * @example
- *   <FlipCard FrontCard={<FrontComponent />} BackCard={<BackComponent />} />;
- */
+interface FlipCardComponentProps {
+  width?: string;
+  className?: string;
+  FrontCard?: React.ReactNode;
+  BackCard?: React.ReactNode;
+  isFlipped?: boolean;
+  onFlip?: () => void;
+}
+
+interface CardSideComponentProps {
+  disabled?: boolean;
+  hidden?: boolean;
+  buttonText?: string;
+  children?: React.ReactNode;
+  switched?: boolean;
+  setSwitched?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+/** Renders a flip card component with a front and back side. */
 export default function FlipCard({
   width,
   className,
   FrontCard,
   BackCard,
   isFlipped,
-  onFlip,
   ...props
 }: FlipCardComponentProps) {
-  const { FrontCard: Front, BackCard: Back } = useMemo(
-    () => ({ FrontCard, BackCard }),
-    [FrontCard, BackCard],
-  );
+  const Front = FrontCard;
+  const Back = BackCard;
 
   const [switched, setSwitched] = useState(isFlipped ?? false);
 
   return (
-    <Box
+    <div
       className={`flip-card${switched ? " is-switched" : ""}`}
-      sx={{
+      style={{
         width: width ?? "100%",
       }}
     >
-      <Box className={`flip-card__wrapper${className ? ` ${className}` : ""}`}>
-        <Card className={`flip-card__side${!switched ? " is-active" : ""}`}>
+      <div className={`flip-card__wrapper${className ? ` ${className}` : ""}`}>
+        <Card
+          className={`flip-card__side${!switched ? " is-card-active" : ""}`}
+        >
           <CardSide {...{ switched, setSwitched, hidden: switched, ...props }}>
             {Front ?? <></>}
           </CardSide>
         </Card>
         <Card
-          className={`flip-card__side flip-card__side--back${switched ? " is-active" : ""}`}
+          className={`flip-card__side flip-card__side--back${switched ? " is-card-active" : ""}`}
         >
           <CardSide {...{ switched, setSwitched, hidden: !switched, ...props }}>
             {Back ?? <></>}
           </CardSide>
         </Card>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }
 
 /** Renders a card side component with a flip button and content. */
 function CardSide({
-  spacing,
-  columns,
   disabled,
   hidden,
   buttonText,
   children,
   switched,
   setSwitched,
-  ...props
 }: CardSideComponentProps) {
   return (
-    <CardContent>
-      <Grid
-        container
-        spacing={spacing ?? { sm: 2, md: 4 }}
-        columns={columns ?? { xs: 4, sm: 8, md: 12 }}
-        {...props}
-      >
+    <CardContent className="p-0">
+      <div className="grid grid-cols-1 gap-4">
         {!hidden && React.Children.map(children, (child) => <>{child}</>)}
-        <Grid item>
+        <div className="flex justify-center">
           <Button
-            variant="outlined"
-            onClick={() => setSwitched(!switched)}
+            variant="outline"
+            onClick={() => setSwitched?.(!switched)}
             disabled={disabled}
           >
             {buttonText ?? "View Offer"}
           </Button>
-        </Grid>
-      </Grid>
+        </div>
+      </div>
     </CardContent>
   );
 }

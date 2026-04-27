@@ -1,41 +1,50 @@
-import { Container } from "@mui/material";
 import type { LinksFunction } from "react-router";
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from "react-router";
 import type { Route } from "./+types/root";
 
 import { ErrorFallback } from "~/components/ErrorFallback";
-import appStylesHref from "~/styles.css?url";
-import { getMuiLinks, MuiDocument, MuiMeta } from "~/theme";
+import LayoutShell from "~/components/LayoutShell";
+import Header from "~/components/Header";
+import Footer from "~/components/Footer";
+import { ThemeProvider } from "~/components/ThemeProvider";
+import appStylesHref from "~/app.css?url";
 
 export const links: LinksFunction = () => [
-  ...getMuiLinks(),
   { rel: "stylesheet", href: appStylesHref },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
-        <MuiMeta />
         <Links />
       </head>
       <body>
-        <MuiDocument>
-          <Container>{children}</Container>
-        </MuiDocument>
-        <ScrollRestoration />
-        <Scripts />
+        <ThemeProvider>
+          {children}
+          <ScrollRestoration />
+          <Scripts />
+        </ThemeProvider>
       </body>
     </html>
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function App(_: Route.ComponentProps) {
-  return <Outlet />;
+export default function App() {
+  const location = useLocation();
+
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header currentPath={location.pathname} />
+      <LayoutShell>
+        <Outlet />
+      </LayoutShell>
+      <Footer />
+    </div>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

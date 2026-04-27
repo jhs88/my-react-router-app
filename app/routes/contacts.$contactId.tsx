@@ -1,7 +1,19 @@
-import { Box, Button, Link, Stack, Typography } from "@mui/material";
-import { Form, useFetcher } from "react-router";
+import { Form, useFetcher, useNavigation } from "react-router";
 import invariant from "tiny-invariant";
 import type { Route } from "./+types/contacts.$contactId";
+import { Button } from "~/components/ui/button";
+import { Spinner } from "~/components/ui/spinner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "~/components/ui/alert-dialog";
 
 import { getContact, updateContact } from "~/api/data";
 
@@ -15,9 +27,6 @@ export async function action({ params, request }: Route.ActionArgs) {
 
 export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.contactId, "Missing contactId param");
-  // const delay = (milliseconds: number) =>
-  // new Promise((res) => setTimeout(() => res({ data: [] }), milliseconds));
-  // const test = delay(2000);
   const contact = await getContact(params.contactId);
   if (!contact) throw new Response("Not Found", { status: 404 });
   return { contact };
@@ -25,101 +34,92 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 export default function Contact({ loaderData }: Route.ComponentProps) {
   const { contact } = loaderData;
+  const navigation = useNavigation();
 
   return (
-    <Stack
-      id="contact"
-      sx={{
-        p: "1rem",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Box
-        component="img"
-        alt={`${contact.first} ${contact.last} avatar`}
-        key={contact.avatar}
-        src={contact.avatar}
-        sx={{
-          width: "50%",
-          borderRadius: "50%",
-        }}
-      />
-      <Stack
-        direction="row"
-        spacing={4}
-        sx={{
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="h3" gutterBottom>
-          {contact.first || contact.last
-            ? `${contact.first} ${contact.last}`
-            : "No Name"}
-        </Typography>
-        <Favorite contact={contact} />
-      </Stack>
-      {contact.twitter && (
-        <Link
-          variant="h4"
-          href={`https://twitter.com/${contact.twitter}`}
-          gutterBottom
-        >
-          {contact.twitter}
-        </Link>
-      )}
-      {contact.notes && <Typography gutterBottom>{contact.notes}</Typography>}
-      <Stack
-        direction="row"
-        spacing={2}
-        sx={{
-          mt: "2rem",
-        }}
-      >
-        <Form action="edit">
-          <Button variant="outlined" type="submit">
-            Edit
-          </Button>
-        </Form>
-        <Form
-          action="destroy"
-          method="post"
-          onSubmit={(event) => {
-            const response = confirm(
-              "Please confirm you want to delete this record.",
-            );
-            if (!response) {
-              event.preventDefault();
-            }
-          }}
-        >
-          <Button variant="outlined" type="submit">
-            Delete
-          </Button>
-        </Form>
-      </Stack>
-    </Stack>
+    <div className="max-w-2xl mx-auto p-4">
+      <div className="flex flex-col items-center justify-center">
+        <img
+          alt={`${contact.first || ""} ${contact.last || ""} avatar`}
+          src={contact.avatar}
+          className="w-32 h-32 rounded-full object-cover mb-4"
+        />
+        <div className="flex flex-col items-center justify-center">
+          <h1 className="text-2xl font-bold mb-2">
+            {contact.first || contact.last
+              ? `${contact.first} ${contact.last}`
+              : "No Name"}
+          </h1>
+          <Favorite contact={contact} />
+        </div>
+        {contact.twitter && (
+          <a
+            href={`https://twitter.com/${contact.twitter}`}
+            className="text-primary hover:underline mt-2"
+          >
+            {contact.twitter}
+          </a>
+        )}
+        {contact.notes && (
+          <p className="mt-4 text-foreground/80">
+            {contact.notes}
+          </p>
+        )}
+        <div className="flex flex-row gap-2 mt-6">
+          <Form action="edit">
+            <Button type="submit" variant="default">
+              Edit
+            </Button>
+          </Form>
+          <AlertDialog>
+            <AlertDialogTrigger>
+              <Button variant="destructive">Delete</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete contact</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete the
+                  contact record.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <Form action="destroy" method="post">
+                  <AlertDialogAction>
+                    <Button type="submit" variant="destructive" disabled={navigation.state === "submitting"}>
+                      {navigation.state === "submitting" ? "Deleting..." : "Delete"}
+                    </Button>
+                  </AlertDialogAction>
+                </Form>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      </div>
+    </div>
   );
 }
 
-function Favorite({ contact }: { contact: Pick<ContactRecord, "favorite"> }) {
+function Favorite({ contact }: { contact: { favorite?: boolean; first?: string; last?: string } }) {
   const fetcher = useFetcher();
-  // read the optimistic value from fetcher.formData
   const favorite = fetcher.formData
     ? fetcher.formData.get("favorite") === "true"
     : contact.favorite;
+  const name = `${contact.first ?? ""} ${contact.last ?? ""}`.trim();
 
   return (
-    // fetch.Form does not navigate
-    <fetcher.Form method="post">
+    <fetcher.Form method="post" className="mt-2">
       <Button
-        variant="outlined"
-        aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
+        type="submit"
+        variant="outline"
+        aria-label={favorite ? `Remove ${name || "this contact"} from favorites` : `Add ${name || "this contact"} to favorites`}
         name="favorite"
         value={favorite ? "false" : "true"}
-        type="submit"
+        className="rounded-lg gap-2"
       >
         {favorite ? "★" : "☆"}
+        <span className="sr-only">Favorite</span>
       </Button>
     </fetcher.Form>
   );

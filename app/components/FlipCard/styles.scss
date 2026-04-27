@@ -57,3 +57,9 @@ $card-transition-time: 0.5s;
     transform: rotateY(0);
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-card__wrapper {
+    animation: none !important;
+  }
+}

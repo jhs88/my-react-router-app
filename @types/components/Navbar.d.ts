@@ -1,3 +1,0 @@
-type NavbarProps = {
-  contacts: ContactRecord[];
-};

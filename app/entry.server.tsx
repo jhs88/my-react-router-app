@@ -13,7 +13,6 @@ import { ServerRouter } from "react-router";
 import { isbot } from "isbot";
 import type { RenderToPipeableStreamOptions } from "react-dom/server";
 import { renderToPipeableStream } from "react-dom/server";
-import { MuiProvider } from "~/theme";
 
 // Reject/cancel all pending promises after 5 seconds
 export const streamTimeout = 5000;
@@ -40,9 +39,7 @@ export default function handleRequest(
         : "onShellReady";
 
     const { pipe, abort } = renderToPipeableStream(
-      <MuiProvider>
-        <ServerRouter context={routerContext} url={request.url} />
-      </MuiProvider>,
+      <ServerRouter context={routerContext} url={request.url} />,
       {
         [readyOption]() {
           shellRendered = true;

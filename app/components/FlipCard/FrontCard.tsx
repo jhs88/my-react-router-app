@@ -1,52 +1,40 @@
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import React from "react";
 
 /** Renders the front card component. */
 export default function FrontCard(props: { children?: React.ReactNode }) {
   return (
-    <>
-      <Grid item xs={4} md={6}>
-        <Box
-          component="img"
-          style={{ maxWidth: "100%", height: "auto" }}
-          src=""
-        />
-      </Grid>
-      <Grid item xs={4} md={6}>
-        <Stack>
-          <Typography
-            aria-label="front heading"
-            variant="h1"
-            gutterBottom
-          ></Typography>
-          <Typography
-            className="card-sub-heading"
-            aria-label="front subheading"
-            variant="h4"
-            gutterBottom
-          ></Typography>
-          <Typography variant="subtitle2" gutterBottom>
-            <span
-              aria-label="Expiry date label"
-              className="card display-date-label mr-2"
-            >
-              Offer Expires :
-            </span>
-            <span aria-label="expiry date" className="display-date-label">
-              Date
-            </span>
-          </Typography>
-          <Typography className="card-description-1" gutterBottom></Typography>
-          <Typography className="card-description-2" gutterBottom></Typography>
-          <Typography className="card-description-3" gutterBottom></Typography>
-        </Stack>
-      </Grid>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <img className="max-w-full h-auto" src="" alt="" />
+      </div>
+      <div className="flex flex-col space-y-2">
+        <h1 className="text-4xl font-bold" aria-label="front heading">
+          Front Card
+        </h1>
+        <h4
+          className="text-2xl font-semibold card-sub-heading"
+          aria-label="front subheading"
+        >
+          Subheading
+        </h4>
+        <p className="text-sm font-medium text-muted-foreground">
+          <span
+            aria-label="Expiry date label"
+            className="card display-date-label mr-2"
+          >
+            Offer Expires :
+          </span>
+          <span aria-label="expiry date" className="display-date-label">
+            Date
+          </span>
+        </p>
+        <p className="text-sm card-description-1"></p>
+        <p className="text-sm card-description-2"></p>
+        <p className="text-sm card-description-3"></p>
+      </div>
       {React.Children.map(props?.children, (child) => (
-        <Grid item>{child}</Grid>
+        <div>{child}</div>
       ))}
-    </>
+    </div>
   );
 }

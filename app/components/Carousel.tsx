@@ -1,9 +1,6 @@
-/* eslint-disable react/display-name */
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { IconButton, Stack } from "@mui/material";
-import usePagination from "@mui/material/usePagination";
 import React, { Children, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "~/components/ui/button";
 
 type CarouselProps = {
   limit?: number;
@@ -23,77 +20,49 @@ type CarouselProps = {
  */
 export default function Carousel({ limit = 1, children }: CarouselProps) {
   const totalCount = Children.count(children) ?? 0;
-  /** Page count */
-  const count = parseInt(
-    `${totalCount / limit + (totalCount % limit > 0 ? 1 : 0)}`,
-  );
+  const pageCount = Math.ceil(totalCount / limit);
 
   const [page, setPage] = useState(1);
-  const pageStartIndex = (page - 1) * limit;
 
-  /** Mui Pagination hook used to get buttons */
-  const { items } = usePagination({
-    page,
-    count,
-    onChange: (_, page) => setPage(page),
-  });
+  const handlePrev = () => setPage((p) => Math.max(p - 1, 1));
+  const handleNext = () => setPage((p) => Math.min(p + 1, pageCount));
 
-  /** Uses hook to create custom next & previous buttons */
-  const { Previous, Next } = items.reduce(
-    (result, { type }, i) => {
-      const Button = (props: object) => (
-        <IconButton
-          sx={{
-            padding: { xs: "1.25rem 0.5rem", md: "5rem 0.5rem" },
-            borderRadius: 0,
-            boxShadow: "none",
-          }}
-          key={type}
-          aria-label={type}
-          {...props}
-        />
-      );
-
-      if (type === "previous")
-        result.Previous = () => (
-          <Button {...items[i]}>
-            <KeyboardArrowLeftIcon />
-          </Button>
-        );
-      else if (type === "next")
-        result.Next = () => (
-          <Button {...items[i]}>
-            <KeyboardArrowRightIcon />
-          </Button>
-        );
-      return result;
-    },
-    { Previous: () => <></>, Next: () => <></> },
+  const visibleChildren = Children.toArray(children).slice(
+    (page - 1) * limit,
+    page * limit,
   );
 
   return (
-    <Stack
-      direction="row"
-      sx={{
-        alignItems: "stretch",
-        justifyContent: "space-between",
-      }}
-    >
-      <Previous />
-      <Stack
-        direction="row"
-        spacing={{ xs: 2, md: 8 }}
-        sx={{
-          alignSelf: "center",
-          alignItems: "center",
-        }}
-      >
-        {children &&
-          Children.toArray(children)
-            .slice(pageStartIndex, pageStartIndex + limit)
-            .map((child) => child)}
-      </Stack>
-      <Next />
-    </Stack>
+    <div className="flex items-center justify-between w-full">
+      <div>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handlePrev}
+          disabled={page <= 1}
+          aria-label="Previous"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+      </div>
+
+      <div className="flex items-center gap-4 md:gap-8">
+        {visibleChildren.map((child, idx) => (
+          <React.Fragment key={idx}>{child}</React.Fragment>
+        ))}
+      </div>
+
+      <div>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleNext}
+          disabled={page >= pageCount || pageCount === 0}
+          aria-label="Next"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
   );
 }

@@ -1,7 +1,11 @@
-import { Button, Grid, InputLabel, Stack, TextField } from "@mui/material";
-import { Form, redirect, useNavigate } from "react-router";
+import { Form, redirect, useNavigate, useNavigation } from "react-router";
 import invariant from "tiny-invariant";
 import type { Route } from "./+types/contacts.$contactId_.edit";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { Spinner } from "~/components/ui/spinner";
+import { Textarea } from "~/components/ui/textarea";
 
 import { getContact, updateContact } from "~/api/data";
 
@@ -9,7 +13,7 @@ export async function action({ params, request }: Route.ActionArgs) {
   invariant(params.contactId, "Missing contactId param");
   const formData = await request.formData();
   const updates = Object.fromEntries(formData);
-  await updateContact(params.contactId, updates);
+  await updateContact(params.contactId, updates as Record<string, unknown>);
   return redirect(`/contacts/${params.contactId}`);
 }
 
@@ -23,107 +27,78 @@ export async function loader({ params }: Route.LoaderArgs) {
 export default function EditContact({ loaderData }: Route.ComponentProps) {
   const { contact } = loaderData;
   const navigate = useNavigate();
+  const navigation = useNavigation();
 
   return (
-    <Form id="contact-form" method="post">
-      <Grid
-        container
-        spacing={2}
-        sx={{
-          p: "2rem",
-        }}
-      >
-        <Grid item xs={12} md={6}>
-          <InputLabel htmlFor="first">First Name</InputLabel>
-          <TextField
-            variant="filled"
-            fullWidth
-            defaultValue={contact.first}
-            aria-label="First name"
-            label="First name"
+    <Form
+      id="contact-form"
+      method="post"
+      className="max-w-2xl mx-auto p-4 space-y-6"
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="first">First Name</Label>
+          <Input
+            id="first"
             name="first"
-            type="text"
+            defaultValue={contact.first}
             placeholder="Bobby"
             required
           />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <InputLabel htmlFor="last">Last Name</InputLabel>
-          <TextField
-            variant="filled"
-            fullWidth
-            aria-label="Last name"
-            defaultValue={contact.last}
-            label="Last name"
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="last">Last Name</Label>
+          <Input
+            id="last"
             name="last"
-            type="text"
+            defaultValue={contact.last}
             placeholder="Johnson"
             required
           />
-        </Grid>
-        {/* <div>
-          <InputLabel htmlFor="email">Email</InputLabel>
-          <TextField
-            variant="filled"
-            defaultValue={contact.email}
-            label="Email"
-            name="email"
-            placeholder="og.bobby.johnson@gmail.com"
-            type="text"
-          />
-        </div> */}
-        <Grid item xs={12} sm={6}>
-          <InputLabel htmlFor="twitter">Twitter</InputLabel>
-          <TextField
-            variant="filled"
-            fullWidth
-            defaultValue={contact.twitter}
-            label="Twitter"
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="twitter">Twitter</Label>
+          <Input
+            id="twitter"
             name="twitter"
+            defaultValue={contact.twitter}
             placeholder="@jack"
-            type="text"
           />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <InputLabel htmlFor="avatar">Avatar URL</InputLabel>
-          <TextField
-            variant="filled"
-            fullWidth
-            aria-label="Avatar URL"
-            defaultValue={contact.avatar}
-            label="Avatar URL"
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="avatar">Avatar URL</Label>
+          <Input
+            id="avatar"
             name="avatar"
+            defaultValue={contact.avatar}
             placeholder="https://example.com/avatar.jpg"
-            type="text"
           />
-        </Grid>
-        <Grid item xs={12}>
-          <InputLabel htmlFor="notes">Notes</InputLabel>
-          <TextField
-            variant="filled"
-            multiline
-            fullWidth
-            defaultValue={contact.notes}
-            label="Notes"
+        </div>
+        <div className="md:col-span-2 space-y-2">
+          <Label htmlFor="notes">Notes</Label>
+          <Textarea
+            id="notes"
             name="notes"
+            defaultValue={contact.notes}
             rows={6}
           />
-        </Grid>
-      </Grid>
-      <Stack
-        direction="row"
-        spacing={2}
-        sx={{
-          justifyContent: "end",
-        }}
-      >
-        <Button onClick={() => navigate(-1)} type="button">
+        </div>
+      </div>
+      <div className="flex flex-row gap-2 justify-end pt-4">
+        <Button type="button" variant="outline" onClick={() => navigate(-1)}>
           Cancel
         </Button>
-        <Button variant="outlined" type="submit">
-          Save
+        <Button type="submit" variant="default" disabled={navigation.state === "submitting"}>
+          {navigation.state === "submitting" ? (
+            <>
+              <Spinner className="size-4" />
+              <span className="sr-only">Saving...</span>
+            </>
+          ) : (
+            "Save"
+          )}
         </Button>
-      </Stack>
+      </div>
     </Form>
   );
 }

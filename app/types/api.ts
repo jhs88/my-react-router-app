@@ -1,4 +1,4 @@
-type ContactMutation = {
+export type ContactMutation = {
   id?: string;
   first?: string;
   last?: string;
@@ -8,7 +8,7 @@ type ContactMutation = {
   favorite?: boolean;
 };
 
-type ContactRecord = ContactMutation & {
+export type ContactRecord = ContactMutation & {
   id: string;
   createdAt: string;
 };

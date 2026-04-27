@@ -1,3 +1,4 @@
+import mdx from "@mdx-js/rollup";
 import { reactRouter } from "@react-router/dev/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { reactRouterDevTools } from "react-router-devtools";
@@ -6,12 +7,16 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   ssr: {
-    noExternal: ["@mui/*"],
+    noExternal: [],
   },
+
   plugins: [
     reactRouterDevTools(),
     tailwindcss(),
+    mdx(),
     reactRouter(),
-    tsconfigPaths(),
   ],
+  resolve: {
+    tsconfigPaths: true,
+  },
 });

@@ -6,6 +6,7 @@ import { matchSorter } from "match-sorter";
 // @ts-expect-error - no types, but it's a tiny function
 import sortBy from "sort-by";
 import invariant from "tiny-invariant";
+import type { ContactMutation, ContactRecord } from "~/types/api";
 
 ////////////////////////////////////////////////////////////////////////////////
 // This is just a fake DB table. In a real app you'd be talking to a real db or
@@ -80,7 +81,8 @@ export async function deleteContact(id: string) {
   fakeContacts.destroy(id);
 }
 
-[
+// Seed data — run once on server startup
+const seedContacts = [
   {
     avatar:
       "https://sessionize.com/image/124e-400o400o2-wHVdAuNaxi8KJrgtN3ZKci.jpg",
@@ -293,7 +295,9 @@ export async function deleteContact(id: string) {
     last: "Jensen",
     twitter: "@jenseng",
   },
-].forEach((contact) => {
+];
+
+seedContacts.forEach((contact) => {
   fakeContacts.create({
     ...contact,
     id: `${contact.first.toLowerCase()}-${contact.last.toLocaleLowerCase()}`,

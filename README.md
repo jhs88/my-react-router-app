@@ -1,40 +1,47 @@
-Check [This PR](https://github.com/mahmoudmoravej/react-router-mui/pull/1) To see what changes you need to integrate MUI in your react-router app.
+# Journal
 
----
+A modern web journal built with React Router, TypeScript, and Tailwind CSS.
 
-# Welcome to react-router + Vite!
+## Tech Stack
 
-📖 See the [react-router docs](https://react-router.run/docs) and the [react-router Vite docs](https://react-router.run/docs/en/main/future/vite) for details on supported features.
+- [React Router v7](https://reactrouter.com) — Routing and data loading
+- [TypeScript](https://www.typescriptlang.org) — Type safety
+- [Tailwind CSS v4](https://tailwindcss.com) — Styling
+- [MDX](https://mdxjs.com) — Blog content
+- [Geist](https://vercel.com/font) — Typography
+- [shadcn/ui](https://ui.shadcn.com) — UI components
 
-## Development
+## Getting Started
 
-Run the Vite dev server:
-
-```shellscript
+```bash
+npm install
 npm run dev
 ```
 
-## Deployment
+## Development
 
-First, build your app for production:
-
-```sh
-npm run build
+```bash
+npm run dev       # Start dev server
+npm run build     # Build for production
+npm run start     # Start production server
+npm run typecheck # Type check
 ```
 
-Then run the app in production mode:
+## Blog
 
-```sh
-npm start
+Blog posts live in `app/content/blog/` as MDX files. Each post has frontmatter for metadata (title, date, readTime, description).
+
+## Project Structure
+
 ```
-
-Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying Node applications, the built-in react-router app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-- `build/server`
-- `build/client`
+app/
+├── components/     # Reusable UI components
+│   ├── ui/         # shadcn/ui components
+│   ├── Header.tsx
+│   ├── Footer.tsx
+│   └── LayoutShell.tsx
+├── content/blog/   # MDX blog posts
+├── routes/         # File-based routes
+├── types/          # Shared TypeScript types
+└── api/            # Data layer
+```

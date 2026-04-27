@@ -1,14 +1,19 @@
-import { Box } from "@mui/material";
+import { Link } from "react-router";
+import { Button } from "~/components/ui/button";
 
-export default function Home() {
+export default function ContactsIndex() {
   return (
-    <Box bgcolor={"white"} pt={12} pb={12} borderRadius={1.5}>
-      <p id="index-page">
-        This is a demo for React Router.
-        <br />
-        Check out{" "}
-        <a href="https://reactrouter.com">the docs at reactrouter.com</a>.
+    <div className="flex flex-col items-center justify-center min-h-[400px] text-center space-y-6">
+      <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+        No contacts yet
+      </h1>
+      <p className="text-muted-foreground max-w-md leading-relaxed">
+        Get started by creating your first contact. You can edit, favorite, and
+        search contacts from the sidebar.
       </p>
-    </Box>
+      <Link to="/contacts/new">
+        <Button variant="default">New Contact</Button>
+      </Link>
+    </div>
   );
 }
